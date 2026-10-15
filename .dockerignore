@@ -1,0 +1,8 @@
+.git
+.gitignore
+*.pdf
+*.md
+*.ps1
+Jenkinsfile
+.release-*
+.test-*

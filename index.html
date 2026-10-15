@@ -170,6 +170,16 @@
                 </article>
             </div>
         </section>
+        <section id="order-confirmation" class="restaurant">
+            <h2>Order Confirmation</h2>
+            <p>Try the ordering demonstration for an available item.</p>
+            <button type="button" onclick="document.getElementById('order-message').hidden=false"
+                    style="background:#d84315;color:white;border:0;border-radius:6px;padding:12px 18px;cursor:pointer">
+                Place a demo order
+            </button>
+            <p id="order-message" role="status" hidden>Thank you for your order! QuickBite Kitchen has received your demo request.</p>
+            <p><small>Assessment demo: no payment or real order is sent.</small></p>
+        </section>
     </main>
 
     <footer>
@@ -178,4 +188,3 @@
     </footer>
 </body>
 </html>
-```
