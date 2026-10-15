@@ -3,6 +3,14 @@ $ErrorActionPreference = 'Stop'
 $username = $env:DH_USER.Trim()
 $token = $env:DH_TOKEN.Trim()
 if (!$username -or !$token) { throw 'Docker Hub credentials are empty.' }
+$fingerprintFile = 'C:\Users\abdul\Documents\Codex\2026-10-15\give\work\food-auth.expected'
+if (Test-Path -LiteralPath $fingerprintFile) {
+    $hasher = [System.Security.Cryptography.SHA256]::Create()
+    $fingerprint = [BitConverter]::ToString($hasher.ComputeHash([Text.Encoding]::UTF8.GetBytes($token))).Replace('-','').ToLowerInvariant()
+    $hasher.Dispose()
+    Write-Host "Bound credential matches verified credential: $($fingerprint -eq (Get-Content -Raw $fingerprintFile).Trim())"
+    Write-Host "Bound credential length: $($token.Length)"
+}
 $authDirectory = Join-Path $env:TEMP ("jenkins-food-docker-" + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $authDirectory | Out-Null
 try {
