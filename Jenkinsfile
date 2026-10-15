@@ -42,10 +42,23 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DH_USER', passwordVariable: 'DH_TOKEN')]) {
                     powershell '''
-                        $env:DH_TOKEN | docker login --username $env:DH_USER --password-stdin
-                        if ($LASTEXITCODE -ne 0) { throw 'Docker Hub login failed.' }
-                        docker push "$($env:DOCKER_IMAGE):$($env:IMAGE_TAG)"
-                        if ($LASTEXITCODE -ne 0) { throw 'Image push failed.' }
+                        $ErrorActionPreference = 'Stop'
+                        $authDirectory = Join-Path $env:TEMP "jenkins-food-docker-$env:BUILD_NUMBER"
+                        New-Item -ItemType Directory -Path $authDirectory -Force | Out-Null
+                        try {
+                            $token = $env:DH_TOKEN.Trim()
+                            $username = $env:DH_USER.Trim()
+                            if (!$token -or !$username) { throw 'Docker Hub credentials are empty.' }
+                            # Isolate this build from credentials cached by the Windows service account.
+                            $token | docker --config $authDirectory login --username $username --password-stdin
+                            if ($LASTEXITCODE -ne 0) { throw 'Docker Hub login failed.' }
+                            docker --config $authDirectory push "$($env:DOCKER_IMAGE):$($env:IMAGE_TAG)"
+                            if ($LASTEXITCODE -ne 0) { throw 'Image push failed.' }
+                        } finally {
+                            $authFile = Join-Path $authDirectory 'config.json'
+                            if (Test-Path -LiteralPath $authFile) { Remove-Item -LiteralPath $authFile }
+                            if (Test-Path -LiteralPath $authDirectory) { Remove-Item -LiteralPath $authDirectory }
+                        }
                     '''
                 }
             }
