@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickBite - Online Food Ordering</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #fff8f0;
+            color: #292929;
+        }
+
+        header {
+            background: #d84315;
+            color: white;
+            padding: 25px 15px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0 0 8px;
+        }
+
+        nav {
+            background: #292929;
+            padding: 14px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 14px;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .offer {
+            background: #ffedb5;
+            border-left: 5px solid #d84315;
+            padding: 18px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .restaurant, .food-card {
+            background: white;
+            padding: 18px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px #00000012;
+        }
+
+        .restaurant {
+            margin-bottom: 25px;
+        }
+
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .food-card h3 {
+            color: #d84315;
+        }
+
+        .price {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .available {
+            color: #188038;
+            font-weight: bold;
+        }
+
+        .unavailable {
+            color: #b3261e;
+            font-weight: bold;
+        }
+
+        .offer-tag {
+            background: #e8f5e9;
+            color: #176b32;
+            padding: 5px 9px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        footer {
+            margin-top: 30px;
+            padding: 20px;
+            text-align: center;
+            background: #292929;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>QuickBite</h1>
+        <p>Fresh food delivered to your doorstep!</p>
+    </header>
+
+    <nav>
+        <a href="#restaurant">Restaurant</a>
+        <a href="#categories">Categories</a>
+        <a href="#offers">Offers</a>
+    </nav>
+
+    <main>
+        <section id="offers" class="offer">
+            <h2>Today's Special Offers</h2>
+            <p>Get 20% OFF on selected meals.</p>
+            <p>Use coupon code: QUICK20</p>
+        </section>
+
+        <section id="restaurant" class="restaurant">
+            <h2>Restaurant Details</h2>
+            <p><strong>Name:</strong> QuickBite Kitchen</p>
+            <p><strong>Cuisine:</strong> Indian, Chinese and Fast Food</p>
+            <p><strong>Opening Hours:</strong> 10:00 AM - 10:00 PM</p>
+            <p><strong>Delivery:</strong> Available</p>
+        </section>
+
+        <section id="categories">
+            <h2>Food Categories</h2>
+            <p>🍕 Pizza | 🍔 Burgers | 🍛 Indian Meals | 🥤 Beverages</p>
+
+            <h2>Popular Menu Items</h2>
+            <div class="menu">
+                <article class="food-card">
+                    <h3>Margherita Pizza</h3>
+                    <p>Classic cheese pizza with tomato sauce.</p>
+                    <p class="price">₹199</p>
+                    <p class="available">Available</p>
+                    <span class="offer-tag">10% OFF</span>
+                </article>
+
+                <article class="food-card">
+                    <h3>Veg Burger</h3>
+                    <p>Crispy vegetable patty with fresh lettuce.</p>
+                    <p class="price">₹129</p>
+                    <p class="available">Available</p>
+                    <span class="offer-tag">Combo Offer</span>
+                </article>
+
+                <article class="food-card">
+                    <h3>Paneer Biryani</h3>
+                    <p>Fragrant basmati rice with paneer and spices.</p>
+                    <p class="price">₹179</p>
+                    <p class="available">Available</p>
+                </article>
+
+                <article class="food-card">
+                    <h3>Chocolate Milkshake</h3>
+                    <p>Chilled chocolate milkshake.</p>
+                    <p class="price">₹99</p>
+                    <p class="unavailable">Currently Unavailable</p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>QuickBite Online Food Ordering Portal</p>
+        <p>Contact: support@quickbite.example</p>
+    </footer>
+</body>
+</html>
+```
