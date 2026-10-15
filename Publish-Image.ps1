@@ -3,40 +3,26 @@ $ErrorActionPreference = 'Stop'
 $username = $env:DH_USER.Trim()
 $token = $env:DH_TOKEN.Trim()
 if (!$username -or !$token) { throw 'Docker Hub credentials are empty.' }
-$fingerprintFile = 'C:\Users\abdul\Documents\Codex\2026-10-15\give\work\food-auth.expected'
-if (Test-Path -LiteralPath $fingerprintFile) {
-    $hasher = [System.Security.Cryptography.SHA256]::Create()
-    $fingerprint = [BitConverter]::ToString($hasher.ComputeHash([Text.Encoding]::UTF8.GetBytes($token))).Replace('-','').ToLowerInvariant()
-    $hasher.Dispose()
-    Write-Host "Bound credential matches verified credential: $($fingerprint -eq (Get-Content -Raw $fingerprintFile).Trim())"
-    Write-Host "Bound credential length: $($token.Length)"
-}
 $authDirectory = Join-Path $env:TEMP ("jenkins-food-docker-" + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $authDirectory | Out-Null
 try {
-    # Feed credentials directly to the process, independently of PowerShell's pipeline host.
-    $start = New-Object System.Diagnostics.ProcessStartInfo
-    $start.FileName = (Get-Command docker -ErrorAction Stop).Source
-    $start.Arguments = "--config `"$authDirectory`" login --username `"$username`" --password-stdin"
-    $start.UseShellExecute = $false
-    $start.CreateNoWindow = $true
-    $start.RedirectStandardInput = $true
-    $start.RedirectStandardOutput = $true
-    $start.RedirectStandardError = $true
-    $login = New-Object System.Diagnostics.Process
-    $login.StartInfo = $start
+    # Authenticate directly with the registry, then provide a temporary Docker auth file.
+    # This avoids Docker Desktop's login endpoint under the Windows LocalSystem account.
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    $encoded = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("${username}:$token"))
+    $repository = ($Image -split ':')[0]
+    $scope = [Uri]::EscapeDataString("repository:${repository}:pull,push")
+    $response = Invoke-RestMethod -Uri "https://auth.docker.io/token?service=registry.docker.io&scope=$scope" -Headers @{Authorization="Basic $encoded"} -TimeoutSec 20
+    if (!$response.token) { throw 'Docker Hub did not return an authentication token.' }
+    $payload = $response.token.Split('.')[1].Replace('-','+').Replace('_','/')
+    while ($payload.Length % 4) { $payload += '=' }
+    $claims = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($payload)) | ConvertFrom-Json
+    $access = @($claims.access | Where-Object { $_.name -eq $repository })
+    if (!$access -or $access[0].actions -notcontains 'push') { throw 'Docker Hub credential does not grant push access.' }
     Write-Host "Authenticating Docker Hub account: $username"
-    $null = $login.Start()
-    $stdin = New-Object System.IO.StreamWriter($login.StandardInput.BaseStream, (New-Object System.Text.UTF8Encoding($false)))
-    $stdin.Write($token)
-    $stdin.Dispose()
-    $stdout = $login.StandardOutput.ReadToEnd()
-    $stderr = $login.StandardError.ReadToEnd()
-    $login.WaitForExit()
-    if ($stdout) { Write-Host $stdout.Trim() }
-    if ($stderr) { Write-Host $stderr.Trim() }
-    if ($login.ExitCode -ne 0) { throw 'Docker Hub login failed.' }
-    $login.Dispose()
+    Write-Host 'Docker Hub authentication and repository push permission verified.'
+    $config = @{auths=@{'https://index.docker.io/v1/'=@{auth=$encoded}}} | ConvertTo-Json -Depth 6
+    [IO.File]::WriteAllText((Join-Path $authDirectory 'config.json'), $config, (New-Object Text.UTF8Encoding($false)))
     $token = ''
     $ErrorActionPreference = 'Continue'
     $output = & docker --config $authDirectory push $Image 2>&1
