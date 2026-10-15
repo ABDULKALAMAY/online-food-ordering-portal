@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QuickBite - Online Food Ordering</title>
+
     <style>
         * {
             box-sizing: border-box;
@@ -37,6 +38,8 @@
             color: white;
             text-decoration: none;
             margin: 0 14px;
+            display: inline-block;
+            padding: 5px 0;
         }
 
         main {
@@ -53,7 +56,8 @@
             margin-bottom: 24px;
         }
 
-        .restaurant, .food-card {
+        .restaurant,
+        .food-card {
             background: white;
             padding: 18px;
             border-radius: 10px;
@@ -97,6 +101,40 @@
             display: inline-block;
         }
 
+        /* New feature: order confirmation and thank-you message */
+        #order-confirmation {
+            margin-top: 25px;
+        }
+
+        .order-button {
+            background: #d84315;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 18px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .order-button:hover {
+            background: #bf360c;
+        }
+
+        .order-button:focus-visible {
+            outline: 3px solid #292929;
+            outline-offset: 3px;
+        }
+
+        .thank-you {
+            background: #e8f5e9;
+            color: #176b32;
+            border-left: 5px solid #188038;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 18px;
+            font-weight: bold;
+        }
+
         footer {
             margin-top: 30px;
             padding: 20px;
@@ -106,16 +144,18 @@
         }
     </style>
 </head>
+
 <body>
     <header>
         <h1>QuickBite</h1>
         <p>Fresh food delivered to your doorstep!</p>
     </header>
 
-    <nav>
+    <nav aria-label="Main navigation">
         <a href="#restaurant">Restaurant</a>
         <a href="#categories">Categories</a>
         <a href="#offers">Offers</a>
+        <a href="#order-confirmation">Order Demo</a>
     </nav>
 
     <main>
@@ -138,6 +178,7 @@
             <p>🍕 Pizza | 🍔 Burgers | 🍛 Indian Meals | 🥤 Beverages</p>
 
             <h2>Popular Menu Items</h2>
+
             <div class="menu">
                 <article class="food-card">
                     <h3>Margherita Pizza</h3>
@@ -170,15 +211,30 @@
                 </article>
             </div>
         </section>
+
+        <!-- New feature: thank-you message -->
         <section id="order-confirmation" class="restaurant">
             <h2>Order Confirmation</h2>
             <p>Try the ordering demonstration for an available item.</p>
-            <button type="button" onclick="document.getElementById('order-message').hidden=false"
-                    style="background:#d84315;color:white;border:0;border-radius:6px;padding:12px 18px;cursor:pointer">
+
+            <button
+                type="button"
+                class="order-button"
+                aria-controls="order-message"
+                onclick="document.getElementById('order-message').hidden = false">
                 Place a demo order
             </button>
-            <p id="order-message" role="status" hidden>Thank you for your order! QuickBite Kitchen has received your demo request.</p>
-            <p><small>Assessment demo: no payment or real order is sent.</small></p>
+
+            <p id="order-message" class="thank-you" role="status" hidden>
+                Thank you for your order! QuickBite Kitchen has received
+                your demo request.
+            </p>
+
+            <p>
+                <small>
+                    Assessment demo: no payment or real order is sent.
+                </small>
+            </p>
         </section>
     </main>
 
